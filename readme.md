@@ -421,4 +421,93 @@ const _fetchUser = _.memoize(async (id,dispatch) => {
     * call `fetchUser()` with each id
 * a good design pattern is to build small lean action creators and then combine them into complez ones
 * nesting async action creators is done using dispatch ans async await to get intermediate results
-* we get intermediate results using getState thunk param
+* we get intermediate results using getState thunk param to acess redux state
+* we then call the second action creator. to filter the ids we use lodash
+```
+export const fetchPostsAndUsers = () => async (dispatch,getState) => {
+    await dispatch(fetchPosts());
+    const userIds = _.uniq(_.map(getState().posts, 'userId'));
+    userIds.forEach(id => dispatch(fetchUser(id)));
+};
+```
+* we dont need to add await as async calls will update state as they complete
+* if we need use the results as it completes we can use Promise.all . in that case we need to use map() and not forEach()
+```
+await Promise.all(userIds.map(id=>dispatch(fetchUser(id))))
+    .then(()=>getState().users)
+```
+* we can use chain from lodash to chain methods. we can refactor last 2 lines with
+```
+    _.chain(getState().posts)
+        .map('userId')
+        .uniq()
+        .forEach(id => dispatch(fetchUser(id)))
+        .value();
+```
+
+## Section 16: Navigation with React Router
+
+* we will build a simple clone of twitch to allow users to record video and stream it
+* the architecture simplified:
+    * Streamer's computer runs OBS (Open Broadcast Software)
+    * Video Stream + Stream Key goes to an RTMP (Real Time Messaging protocol) Server
+    * Video Feed is sent to Viewer's browser ftom the RTMP Server
+    * a separate Web server that knows which streams are currently broadcasting will offer a separate API to the Browsers Frontend App. this server will get feed from RTMP server
+* if user is not logged in:
+    * can view a list of all streams/channels
+    * can view video for a single stream
+* if a user is logged in:
+    * he can create a new stream/channel
+    * he can edit a stream/channel they created
+    * can delete a stream/channel they created
+* this is a multi app project called 'streams'
+* App Challenges:
+    * need to be able to navigate around separate pages in the app
+    * nedd to allow users to login/logout
+    * need to handle forms in redux
+    * need to master CRUD opers in react/redux
+    * errors will occur. proper error handling
+* we generate a react boilerplate 'client' gut out \src
+* use `npm install --save react-router-dom`
+* React Router does not care on domain and port. its architecture:
+    * BrowserRouter comp wraps Route components.
+    * BrowserRouter listens to 'history' instance to keep track of changes in the search bar of our browser
+    * based on the path defined in each Route it renders the specified component
+    * history can be programmaticaly manipulated
+* router renders based on contains rule `extractedpath.contains(path)` so we can render multiple comps in an inclusive rule. except if we use 'exact' as a Route prop
+* We should not use anchor <a> tags in ReactRouter because it causes unnecessary traffic as we get all JS reloaded. so Redux state, React state all is gone. Instead we use `<Link to"path"></Link>`
+* React Router ofers 3 different Routers (they differ on the part of the URL they look at to route):
+    * BrowserRoute: uses everything after the TLD or port as path
+    * HashRouter: uses everything after a # as path. the # is added by the app
+    * MemoryRouter: does not use URL to track navigation. navigations works but URL is not used or updated
+* The reason for 3 routers is deployment of app depending on server used. updating the URL can create conflicts in traditional servers as they will refetch index.html so reload the app. or even respond with 404
+* a modern server (like react dev server) 1) checks dev resources 2) checks public dir 3) serves index.html => react js code in bundle.js which is linked in index.html takes care
+* HashRouter works if we set webserver to ignore everything after the #
+* Routing policy in steam client
+    * '/' => StreamList
+    * '/streams/new' => StreamCreate
+    * '/streams/edit' => StreamEdit
+    * '/streams/delete' => StreamDelete
+    * '/streams/show' => StreamShow
+* to have a component  always visible we put it in Router but over Route
+
+## Section 17: Handling Authentication with React
+
+* In OAuth authentication we trust a 3rd party to authorize the user for us
+* OAuth is used to identify users in our app and to auth our app to make actions on behalf of user
+* for google auth we can see the [list of scopes](developers.google.com/identify/protocols/googlescopes) we can authorize in our app. usually we care only to know the email
+* OAuth for Servers
+    * results in a 'token' that a server can use to make requests on behalf of the user
+    * usually used when we have an app that needs to access user data when they are not logged in
+    * difficult to setup because we need to store a lot of info about the user
+* OAuth for JS Browser Apps
+    * Results in a token that a browser app can use to make requests on behalf of the user
+    * usually used when we have an app that needs to access user data while they are logged in
+    * very easy to setup thanks to Google JS lib to automate flow
+* We use google's JS lib to initiate OAuth process => Google Server => Google JS lib invokes a callback in our app passin the auth token and info about user
+* Setting Up Oauth
+    * Create a new project at 'console.developers.google.com'
+    * Setup an OAuth confirmation screen
+    * Generate an Oauth Client ID
+    * Install Google API lib, initilaize it with the OAuth Client ID
+    * Make sure the lib is called any time the user clicks on the 'Login with Google' button
