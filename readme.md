@@ -507,7 +507,22 @@ await Promise.all(userIds.map(id=>dispatch(fetchUser(id))))
 * We use google's JS lib to initiate OAuth process => Google Server => Google JS lib invokes a callback in our app passin the auth token and info about user
 * Setting Up Oauth
     * Create a new project at 'console.developers.google.com'
-    * Setup an OAuth confirmation screen
-    * Generate an Oauth Client ID
-    * Install Google API lib, initilaize it with the OAuth Client ID
+    * Setup an OAuth confirmation screen (Project => OAuth consent screen) => Enter name => Save
+    * Generate an Oauth Client ID (Crdentials => OAuth Client ID => Web Application) add Authorized JS origin (localhost:3000) => create
+    * Install Google API lib, (add in index.html head <script src="https://apis.google.com/js/api.js"></script>)initilaize it with the OAuth Client ID
     * Make sure the lib is called any time the user clicks on the 'Login with Google' button
+* the manual loaded google api lib offers gapi lib to the app with all sorts of methods
+* we initialize it in a React Component we add with special purpose
+* check [gapi documentation](https://github.com/google/google-api-javascript-client/blob/master/docs/reference.md)
+* we need to get access to the auth  object using the api lib to sse if the user is signed in
+```
+ window.gapi.load('client:auth2', () => {
+            window.gapi.client.init({
+                clientId: '920491680643-kthoi56udiogurfe1vqt5jg3shqfgqsv.apps.googleusercontent.com',
+                scope: 'email'
+            }).then(()=>{
+                this.auth = window.gapi.auth2.getAuthInstance();
+                this.setState({isSignedIn: this.auth.isSignedIn.get()});
+            });
+        });
+```
