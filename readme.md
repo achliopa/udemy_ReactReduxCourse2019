@@ -558,7 +558,7 @@ const store = createStore(
 * when we add  `?debug_session=<some_string>` to `localhost:3000` redux tools see we try to launch a debug session
 * it keeps the data during page refresh. also if i create multiple debuf gessions reux dev tools persists history for each
 
-## Section 19: Handling Forms with Redux Form
+## Section 19: Handling Forms with [Redux Form](https://redux-form.com)
 
 * use `npm install redux-form@8.1.0` to avoid problems. may be fixed in future
 * Handling Inputs with Redux Form
@@ -566,3 +566,83 @@ const store = createStore(
     * React Component has props and handlers interactng with Redux
     * DOM input elements have a value and event listener linked to React JSX
 * first 2 parts (Redux + React) are part of Redux Form and we get them 4 free
+* project site has many examples
+* how to add built in reducer
+```
+import { combineReducers } from 'redux';
+import { reducer as formReducer } from 'redux-form';
+export default combineReducers({
+     form: formReducer
+});
+```
+* very simple redux form added to a React Component
+```
+import React from 'react';
+import { Field, reduxForm } from 'redux-form';
+
+class StreamCreate extends React.Component {
+    renderInput({input}) {
+        return <input 
+            {...input}
+    }
+
+    render() {
+        console.log(this.props);
+        return (
+            <form>
+                <Field name="title" component={this.renderInput} />
+                <Field name="description" component={this.renderInput} />
+            </form>
+        );
+    }
+}
+
+export default reduxForm({
+    form: 'streamCreate'
+})(StreamCreate);
+```
+* redux form adds the connection to redux state and the component jsx that carries the logic.
+* the redux form component must be passed in a render method that will add the view on which it passes the necessary props (event listeners and input values)
+* instead of connect reduxForm wrapper pases in the bind object
+* any props we add on the ReduxForm component are passed in the render method callback as additional formProps attributes
+* reduxform has a prop for form submission   'handleSubmit'. the method we pass in as callback will get the formvalues as input
+```
+    onSubmit(formValues) {
+        console.log(formValues);
+    }
+
+    render() {
+        return (
+            <form onSubmit={this.props.handleSubmit(this.onSubmit)} className="ui form">
+            .................
+```
+* reduxform offers validation
+    * form is initially rendered OR user interacts with it
+    * validate function gets called with all values from the form
+    * `validate(formValues)`
+    * did the user enter valid inputs? 
+    * yes: return an empty object, it makes redux form think our form is valid. 
+    * no:return an object, for each invalid field put a key value pair on the object with the NAME of the field and an error message => redux form rerenders our component
+* the validate method is outside the component class and is passed formValues
+* a sample validate function
+```
+const validate = (formValues) => {
+    const errors = {};
+
+    if (!formValues.title) {
+        errors.title = 'You must enter a title';
+    }
+
+    if (!formValues.description) {
+        errors.description = 'You must enter a description';
+    }
+
+    return errors;
+};
+```
+* we pass it as attribute in the reduxForm wrapper object
+* the error object from validate is passed into the render method as meta. but we need to keep the name convention for input elements
+
+## Section 20: REST-Based React Apps
+
+* 
