@@ -540,4 +540,29 @@ await Promise.all(userIds.map(id=>dispatch(fetchUser(id))))
     *  these 2 handlers trigger Action Creators trySignIn() and trySignOut() that are async and operate on GAPI
     *  1 more Action Creator changeAuth() listens to GAPI Auth2 status change and affects the Redux Auth state.
     *  this approach is clearer but does not bundle all in an reusable component
-    *  
+
+## Section 18: Redux Dev Tools
+
+* we use [redux devtools extension](https://github.com/zalmoxisus/redux-devtools-extension) for debugging
+* we need to add it as middleware in our app
+```
+import { createStore, applyMiddleware, compose } from 'redux';
+  
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+    reducers,
+    composeEnhancers(applyMiddleware())
+);
+```
+* we can use it as a popup on any app it has it activated and  see the redux timelapse as we use the app
+* when we add  `?debug_session=<some_string>` to `localhost:3000` redux tools see we try to launch a debug session
+* it keeps the data during page refresh. also if i create multiple debuf gessions reux dev tools persists history for each
+
+## Section 19: Handling Forms with Redux Form
+
+* use `npm install redux-form@8.1.0` to avoid problems. may be fixed in future
+* Handling Inputs with Redux Form
+    * Redux Store has a Redux Form Reducer 
+    * React Component has props and handlers interactng with Redux
+    * DOM input elements have a value and event listener linked to React JSX
+* first 2 parts (Redux + React) are part of Redux Form and we get them 4 free
