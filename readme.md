@@ -645,4 +645,13 @@ const validate = (formValues) => {
 
 ## Section 20: REST-Based React Apps
 
-* 
+* [json-server](https://www.npmjs.com/package/json-server) is a package to build mockup RESTful APIs
+* REST convention (once more)
+    * list all records : GET : /streams
+    * get one particular record : GET : /streams/:id
+    * create record : POST : /streams
+    * update a record : PUT : /streams/:id
+    * delete a record : DELETE : /streams/:id
+* we will build the api server in a separate folder  /api an install json-server
+* db.json hold the backend data to be served by the api
+* start script `"start": "json-server -p 3001 -w db.json"`
