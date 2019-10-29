@@ -526,3 +526,18 @@ await Promise.all(userIds.map(id=>dispatch(fetchUser(id))))
             });
         });
 ```
+* gapi class isSignedIn offers a prototype method called 'listen'  where we can add a callback to act when sign in status changes
+* to sign in `gapi.auth2.getAuthInstance().signIn()`. the callback gets a boolean passed in that indicates the signIn status
+* Integrating GAPI OAuth2 with Redux, 1st Approach:
+    * GoogleAuthComponent implements 3 event handlers: onSignInClick(), onSignOutClick(), onAuthChange()
+    * all 3 work on a private (local) instance of the auth class from GAPI `this.auth = window.gapi.auth2.getAuthInstance();`
+    * onAuthChange() fires 2 Action Creators, signIn() and signOut() which affect the Auth State in Redux Store
+    * this state is for App consumption and React render. it is in synch with ` this.auth.isSignedIn.get()`
+    * it is not the best pattern but GoogleAuth is going to be reusable
+* Integrating GAPI OAuth2 with Redux, 2nd Approach:
+    *  Action Creators are linked to GAPI Auth2 firing async calls
+    *  GoogleAuth component implements 2 event handlers: onSignInClick() and onSignOutClick()
+    *  these 2 handlers trigger Action Creators trySignIn() and trySignOut() that are async and operate on GAPI
+    *  1 more Action Creator changeAuth() listens to GAPI Auth2 status change and affects the Redux Auth state.
+    *  this approach is clearer but does not bundle all in an reusable component
+    *  
