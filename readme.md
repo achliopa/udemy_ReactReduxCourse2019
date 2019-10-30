@@ -667,3 +667,4 @@ export default connect(null, { createStream })(formWrapped);
 ```
 * for easy retrieval based on id instead of using an array of streams objects in state we will have an object with id (index) based object elements which are the strams
 * update will be so easy as `{...state,[id]: newObject}` using ES15 key intepolation
+* on to 9 lecture
