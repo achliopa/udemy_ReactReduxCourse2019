@@ -647,11 +647,23 @@ const validate = (formValues) => {
 
 * [json-server](https://www.npmjs.com/package/json-server) is a package to build mockup RESTful APIs
 * REST convention (once more)
-    * list all records : GET : /streams
-    * get one particular record : GET : /streams/:id
-    * create record : POST : /streams
-    * update a record : PUT : /streams/:id
-    * delete a record : DELETE : /streams/:id
+    * list all records : GET : /streams : response => array of records
+    * get one particular record : GET : /streams/:id : response => single record
+    * create record : POST : /streams : response => single record
+    * update a record : PUT : /streams/:id : response => single record
+    * delete a record : DELETE : /streams/:id : : response => nothing
 * we will build the api server in a separate folder  /api an install json-server
 * db.json hold the backend data to be served by the api
 * start script `"start": "json-server -p 3001 -w db.json"`
+* we will use axios from client in an async action creator to post on the backend api passing in formValues
+* clean way to stack component wrappers
+```
+const formWrapped =  reduxForm({
+    form: 'streamCreate',
+    validate
+})(StreamCreate);
+
+export default connect(null, { createStream })(formWrapped);
+```
+* for easy retrieval based on id instead of using an array of streams objects in state we will have an object with id (index) based object elements which are the strams
+* update will be so easy as `{...state,[id]: newObject}` using ES15 key intepolation
