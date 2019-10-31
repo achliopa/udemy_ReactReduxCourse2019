@@ -667,4 +667,6 @@ export default connect(null, { createStream })(formWrapped);
 ```
 * for easy retrieval based on id instead of using an array of streams objects in state we will have an object with id (index) based object elements which are the strams
 * update will be so easy as `{...state,[id]: newObject}` using ES15 key intepolation
-* on to 9 lecture
+* we need to transform the array of streams returns by the backend to an object for state
+* we will use lodash mapkey to do it. `mapKeys(streams, 'id)` 
+* add new streams to state object `{ ...state, ..._.mapKeys(action.payload, 'id')};`
