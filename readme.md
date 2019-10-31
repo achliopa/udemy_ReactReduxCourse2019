@@ -670,3 +670,5 @@ export default connect(null, { createStream })(formWrapped);
 * we need to transform the array of streams returns by the backend to an object for state
 * we will use lodash mapkey to do it. `mapKeys(streams, 'id)` 
 * add new streams to state object `{ ...state, ..._.mapKeys(action.payload, 'id')};`
+* to convert an object of key value pairs to an array `Object.values(state.streams)`
+* we need to add a uid at creation to give priviledges to the creator on them.we use getState from thunk in the action creator

@@ -1,14 +1,22 @@
 {
   "streams": [
     {
-      "title": "a stream",
-      "description": "a very cool stream",
-      "id": 1
+      "title": "A new stream",
+      "description": "A new desc",
+      "userId": "116159247268436008865",
+      "id": 2
     },
     {
-      "title": "a big nasty stream",
-      "description": "kiss me goodbye",
-      "id": 2
+      "title": "A new stream2",
+      "description": "A new desc2",
+      "userId": "116159247268246008865",
+      "id": 3
+    },
+    {
+      "title": "A new stream3",
+      "description": "A new desc3",
+      "userId": "116159247268436008865",
+      "id": 4
     }
   ]
 }
