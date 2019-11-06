@@ -672,3 +672,18 @@ export default connect(null, { createStream })(formWrapped);
 * add new streams to state object `{ ...state, ..._.mapKeys(action.payload, 'id')};`
 * to convert an object of key value pairs to an array `Object.values(state.streams)`
 * we need to add a uid at creation to give priviledges to the creator on them.we use getState from thunk in the action creator
+* we need programmatic async navigation when the api responds, we need to get a handle to the history object. any object the gets rendered in the BrowserRouter has an instance of history passed as a prop. there are 2 approaches
+    * to pass history to the action creator as an argument
+    * to maintain BrowserHistory in a separate file outside the Router and use a plain Router instead of BrowserRouter. then we will import and use it as we please 
+* the code for the history.js file
+```
+import { createBrowserHistory } from 'history';
+export default createBrowserHistory();
+```
+* we pass it as prop to Router `<Router history={history}>`
+* in the submit handler after action creator call we use history to redirect `history.push('/');`
+* 2 ways to communicate the id for the Edit Component
+    * Selection Reducer: when a user clicks on a stream to end it. use a selectionReducer to record which stream us being edited
+    * URL-based selection: put the id of the stream being edited to the URL 'streams/edit/:id'. this is supported by React Router. to pass the part of url as a prop to component
+* to pass wildcards in router `<Route path="/streams/edit/:id" component={StreamEdit} />`
+* wildcard is passed as a prop in `props.params.<wildcard name>` we can have multiple wildcards in the path

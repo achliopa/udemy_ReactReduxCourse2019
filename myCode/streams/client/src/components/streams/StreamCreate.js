@@ -2,6 +2,7 @@ import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import { connect } from 'react-redux';
 import { createStream } from '../../actions';
+import history from '../../history';
 
 class StreamCreate extends React.Component {
     renderError({error, touched}) {
@@ -32,6 +33,7 @@ class StreamCreate extends React.Component {
 
     onSubmit = (formValues) => {
         this.props.createStream(formValues);
+        history.push('/');
     }
 
     render() {
