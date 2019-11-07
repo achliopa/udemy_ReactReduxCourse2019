@@ -687,3 +687,11 @@ export default createBrowserHistory();
     * URL-based selection: put the id of the stream being edited to the URL 'streams/edit/:id'. this is supported by React Router. to pass the part of url as a prop to component
 * to pass wildcards in router `<Route path="/streams/edit/:id" component={StreamEdit} />`
 * wildcard is passed as a prop in `props.params.<wildcard name>` we can have multiple wildcards in the path
+* getting stream from state fails when component renders first time by visiting /streams/edit/:id. because our app first loads state object is empty. if we visit / then route to edit its ok state is populated
+```
+const mapStateToProps = (state, ownProps) => {
+    return { stream: state.streams[ownProps.match.params.id] };
+};
+```
+* when we use id based selection in routing each component needs to be designed to work in isolation and fetch its own data
+* for code reuse we will create a StreamForm component that we will use in StreamCreate and StreamSEdit. both will pass a callback for onSubmit and Edit initialvalues as prop
