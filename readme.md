@@ -695,3 +695,12 @@ const mapStateToProps = (state, ownProps) => {
 ```
 * when we use id based selection in routing each component needs to be designed to work in isolation and fetch its own data
 * for code reuse we will create a StreamForm component that we will use in StreamCreate and StreamSEdit. both will pass a callback for onSubmit and Edit initialvalues as prop
+* when we pass props to StreamForm component we pass them to the ReduxForm wrapper which then passes them to the React component. `initialValues` is a reserved prop to pass an object with initial values to the form
+* STOP WATCHMAN FROM THROIWING ERRORS
+```
+echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches     && \
+  echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_queued_events  && \
+  echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_instances && \
+  watchman shutdown-server
+```
+* formValues contains more data than we need to update. we use lodash pick `initialValues={_.pick(this.props.stream, 'title', 'description')} `
