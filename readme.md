@@ -704,3 +704,32 @@ echo 999999 | sudo tee -a /proc/sys/fs/inotify/max_user_watches     && \
   watchman shutdown-server
 ```
 * formValues contains more data than we need to update. we use lodash pick `initialValues={_.pick(this.props.stream, 'title', 'description')} `
+* put req to the backend causes userID to get lost from db.
+    * PUT replaces all props in a record
+    * PATCH replaces some props in a record
+
+## Section 21: Using React Portals
+
+* modal windows in react are difficutl
+* all react components are childs of a div with id root.
+* react portals allow us to bypass this rule
+* we showcase the difficulty of custom modals with a custom modal.html file in /public
+* files in /public are available in domain root
+* in css z-index property allows to stack eleemtns on top of each other. default is 0
+* wraping an elelement with highh z-index with an element of position: relative and z-index of 0 creates stacking css context. this compares z-index between higher element and others so it null the high index
+* reacts results of deeply nested components aka html elements. its very difficult to play with classes to control a modal
+* the solution is to bypass the nesting and place modal direcly under the html body. this is what portals do in react
+* we add Modal.js for the component. the way to use portals is through ReactDOM using createPortal passing in JSX to return in render instead of plain JSX
+* in createPortal we reference another tag to attach our JSX blob instead of #root. usually we add a div with an  id in index.html for this reason
+```
+const Modal = props => {
+    return ReactDOM.createPortal(
+        <div className="ui dimmer modals visible active">
+            <div className="ui standard modal visible active">
+                Some text
+            </div>
+        </div>,
+        document.querySelector('#modal')
+    );
+}
+```
