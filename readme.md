@@ -733,3 +733,6 @@ const Modal = props => {
     );
 }
 ```
+* when a user clicks on the background of modal we want to dismiss it. we can use history obj to navigate to another route as modsal apears on /streams/delete. we use onCLick event
+* event propagationadds the onCLick handler to child elements. to fix it we add event handler on the child element to anull it `onClick={(e) => e.stopPropagation()}`
+* `React.Fragment` allows us to wrap JSX to satisfy the rule of returning or assigning single JSX elements without being rendered on screen thus satisfying styling rules
