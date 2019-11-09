@@ -16,7 +16,7 @@ class StreamForm extends React.Component {
 
     renderInput = ({ input, label, meta }) => {
         return (
-            <div className="field error">
+            <div className="field">
                 <label>{label}</label>
                 <input
                     // onChange={formProps.input.onChange} 

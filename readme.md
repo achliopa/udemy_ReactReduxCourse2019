@@ -740,4 +740,5 @@ const Modal = props => {
 
 ## Section 22: Implementing Streaming Video
 
-* 
+* focus on StreamShow comp
+* React Router DOM Switch component when wrapping Routes shows only yhe first that matches
