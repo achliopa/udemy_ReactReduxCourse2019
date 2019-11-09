@@ -813,4 +813,8 @@ nms.run();
 
 ## Section 23: The Context System with React
 
-* 
+* Props System: Gets data from a parent component to a direct child component
+* Context System: Gets data from a parent component to any nested child component
+* we will showcase the COntext system with an app that offers 2 languages english and dutch
+* the component hierarchy: App => UserCreate => Field,Button. Context will be used to communicate language property, as UserCreate doesnt care about it.
+* we generate a new project `create-react-app translate`
