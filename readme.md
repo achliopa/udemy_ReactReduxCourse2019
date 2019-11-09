@@ -742,3 +742,75 @@ const Modal = props => {
 
 * focus on StreamShow comp
 * React Router DOM Switch component when wrapping Routes shows only yhe first that matches
+* we will now build the RTMP server to get the streams and serve them
+* in project root dir  we add a folder /rtmpserver and run `npm init`
+* the RTMP server we will use is [Node-Media-Server](https://github.com/illuspas/Node-Media-Server) and implement the example (npm version (recommended))
+* `npm install --save node-media-server` and add index.js where we cp
+```
+const NodeMediaServer = require('node-media-server');
+
+const config = {
+  rtmp: {
+    port: 1935,
+    chunk_size: 60000,
+    gop_cache: true,
+    ping: 30,
+    ping_timeout: 60
+  },
+  http: {
+    port: 8000,
+    allow_origin: '*'
+  }
+};
+
+var nms = new NodeMediaServer(config)
+nms.run();
+```
+* in package.json we add `"start": "node index.js"` and run `npm start` to start the server
+* server accepts video from streamers in p.1935 and uses websocket to stream to client browser on p8000
+* from our pc we will stream using [OBS](https://obsproject.com/) and install for linux and start it up
+* we add a new scene named 'Streaming Scene' and add a source 'Screen Capture XSHM' and select the screen to use. the red border defines what we capture from screen. we also add 'Audio Capture'
+* we do start / stop recording to test creating a local video. in settings we set the recording path
+* we add avideo media player in StreamShow comp. in Node-Media-Server docs we see how to access the streams from browser in 'Accessing the live stream' section. HLS and DASH are more poular formats but difficult to set up. we use the easier 'http-flv' flash video using [flv.js ](https://www.npmjs.com/package/flv)
+* in /client we install    `npm install --save flv.js`
+* in 'StreamShow' we `import flv from 'flv.js';`
+* we add a video element in jsx `<video ref={this.videoRef} style={{ width: '100%' }} controls={true} />` and set the ref in the constructor
+```
+    constructor(props){
+        super(props);
+        this.videoRef = React.createRef();
+    }
+```
+* flv.js gets the stream and converts it to a playable format much like axios
+* in ComponentDidMount we create the player
+```
+       this.player =  flv.createPlayer({
+            type: 'flv',
+            url: 'http://localhost:8000/live/STREAM_NAME.flv'
+        });
+        this.player.attachMediaElement(this.videoRef.current);
+        this.player.load();
+```
+* STREAM_NAME is defined by OBS. for cnvenience we set name as id
+* current videoRef is null and throws an error. this is because we do conditional rendering so at init when we dont have the stream we dont load the <video /> so ref is not attached to video element so there is no current. we will load the player no matter what and do conditional rendering for title and name or we can conditional create the player
+* we put the setup code in a helper method and call it in DidMount and DidUpdate checking if it can load or not
+```
+        if(this.player || !this.props.stream) {
+            return;
+        }
+```
+* in OBS we set up the connection to RTMP server running locally. in settings => stream we select custom and set
+    * Stream Type : Custom Streaming Server
+    * URL : rtmp://localhost/live
+    * Stream key : STREAM_NAME
+* i set name as strem.id (3) press start streaming. refresh show page and BOOM it works
+* when we navigate away from the page (unmount) we need to tell the player to stop streaming video.
+```
+    componentWillUnmount() {
+        this.player.destroy();
+    }
+```
+
+## Section 23: The Context System with React
+
+* 
