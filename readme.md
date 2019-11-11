@@ -872,3 +872,32 @@ class Button extends React.Component {
 }
 ```
 * we wrap a callback to be called at each context velue update
+* consumer is useful when we want to consume multiple contexts in a component
+* consuming multiple context
+```
+            <ColorContext.Consumer>
+            {(value) => 
+                    <button className={`ui button ${value}`}>
+                        <LanguageContext.Consumer>
+                            {(value) => this.renderSubmit(value)}
+                        </LanguageContext.Consumer>
+                    </button>
+            }
+            </ColorContext.Consumer>
+```
+* it has to wrap a method so we return JSX
+* provideing multiple context
+```
+               <LanguageContext.Provider value={this.state.language}>
+               <ColorContext.Provider value='red'>
+                <UserCreate />
+               </ColorContext.Provider> 
+               </LanguageContext.Provider>
+```
+
+## Section 24: Replacing Redux with Context
+
+* Redux vs Context
+    * Redux: Distributes data to various components, centralizes data with store, provides mechanism for changing data in the store
+    * Context: Distributes data to various components
+* we will extract language selector as a different component to attempt replace redux with context
