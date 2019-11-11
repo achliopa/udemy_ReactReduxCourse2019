@@ -833,4 +833,42 @@ export default React.createContext('english');
 * we pass in the default value as param at creation
 * we import LanguageContext in Button
 * we setup contextType property in Button class component `static contextType = LanguageContext;` this is a class attribute so any instance of Button has it. is equivalent to `Button.contextType = LanguageContext`
-* `this.context` returns the efault value 'english
+* `this.context` returns the default value 'english'
+* we need a way to change the value in context so that its useful. we will use the Provider component to do so from App
+* we import the LanguageContext in App and pass the language selection as value in the COntext object to be used down the nested tree with
+```
+ <LanguageContext.Provider value={this.state.language}>
+                <UserCreate />
+               </LanguageContext.Provider>
+```
+* Context object has a Provider attribute. the value prop will be used to update the context
+* the App with context lifecycle (steps 3-6 repeat on each state change):
+    * Application loads up in the browser
+    * we create a context object with a default value of 'english'
+    * app components gets rendered, creates a Provider that wraps UserCreate
+    * Provider updates the value of the context  object to 'this.state.language'
+    * Button and Field reach into context object, see the value from 'this.state.language'
+    * Button and Field render appropriate text to the screen
+* Each separate use of LanguageContext.Provider creates a new separate 'pipe' of information
+* If we dont wrap with Provider the child componets that use context will use only the default value
+* instead of using  this.context and static ContextType components down the tree can use the Consumer react component of context to use the values of the pipe
+* we see the way to use the consumer
+```
+class Button extends React.Component {
+    renderSubmit(value) {
+    return value === 'english' ? 'Submit' : 'Voorleggen';
+    }
+
+    render() {
+
+        return (
+            <button className="ui button primary">
+                <LanguageContext.Consumer>
+                {(value) => this.renderSubmit(value)}
+                </LanguageContext.Consumer>
+            </button>
+        );
+    }
+}
+```
+* we wrap a callback to be called at each context velue update
