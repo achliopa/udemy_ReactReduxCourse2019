@@ -818,3 +818,19 @@ nms.run();
 * we will showcase the COntext system with an app that offers 2 languages english and dutch
 * the component hierarchy: App => UserCreate => Field,Button. Context will be used to communicate language property, as UserCreate doesnt care about it.
 * we generate a new project `create-react-app translate`
+* we will add a context object that acts as a pipe
+* To get info in the Context:
+    * set default value when context is created
+    * In parent component add a Provider component that will push info in the Context
+* To get info out of the Context
+    * reference this.context in the nested child component
+    * create a Consumer componet in the nested child component
+* we add /context folder and 'LanguageContext.js'
+```
+import React from 'react';
+export default React.createContext('english');
+```
+* we pass in the default value as param at creation
+* we import LanguageContext in Button
+* we setup contextType property in Button class component `static contextType = LanguageContext;` this is a class attribute so any instance of Button has it. is equivalent to `Button.contextType = LanguageContext`
+* `this.context` returns the efault value 'english
