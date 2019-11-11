@@ -901,3 +901,38 @@ class Button extends React.Component {
     * Redux: Distributes data to various components, centralizes data with store, provides mechanism for changing data in the store
     * Context: Distributes data to various components
 * we will extract language selector as a different component to attempt replace redux with context
+* if we want to use Context in place of Redux
+    * we need to be able to get data to any component in our hierarchy (ok)
+    * we need to be able to separate our view logic from business logic (implement a store like Component for logic)
+    * we need to be able to split up business logic (not to have a single file with 10000 line sof code)
+* store is implemented as a HOC
+```
+import React from 'react';
+
+const Context = React.createContext('dutch');
+
+export class LanguageStore extends React.Component {
+    state = { language: 'english' };
+
+    onLanguageChange = (language) => {
+        this.setState({ language });
+    }
+
+    render() {
+        return (
+            <Context.Provider value={{ ...this.state, onLanguageChange }} >
+                {this.props.children}
+            </Context.Provider>
+        );
+    }
+}
+
+export default Context;
+```
+* Redux: excellend documents, well-known design patterns, a lot of open source libs
+* Context: no need for extra lib, hard to build a store component with cross cutting concepts
+
+## Section 25: Hooks with Functional Components
+
+* With React Hool system Function based components can have state and (kind off) lifecycle methods
+* Why bother? Hooks makes it easy to share logic between components
