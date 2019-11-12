@@ -936,3 +936,57 @@ export default Context;
 
 * With React Hool system Function based components can have state and (kind off) lifecycle methods
 * Why bother? Hooks makes it easy to share logic between components
+* we create a new react project 'hooks-simple' and gut out src
+* our App will host 2 buttons, depending onthe click event the content of a child ResourceList component will change
+* we refactor class component App with state into functional
+* The [Hook](https://reactjs.org/docs/hooks-intro.html) system in React offers various hooks such as:
+    * `useState()` : Allow a functional component to use a component level state
+    * `useEffect()` : Allow a functional component to use 'lifecycle' methods
+    * `useContext()` : Allow a functional component to use the Context system
+    * `useRef()` : Allow a functional component to use the ref system
+    * `useReducer()` : Allow a functional component to store data through a reducer
+* we import the hooks from react `import React, { useState } from 'react';`
+* the refactored App w/state useing hooks
+```
+const App = () => {
+    const [ resource, setResource ] = useState('posts');
+    return (
+        <div>
+            <div>
+                <button onClick={() => setResource('posts')}>Posts</button>
+                <button onClick={() => setResource('todos') }>Todos</button>
+            </div>
+            {resource}
+        </div>
+    );
+}
+```
+* we set the state prop using useState passing an init value creating a prop and setter
+* we alter the state val with the setter and get it referencing the prop
+* the way to get the setter and prop outs of the hooks method is 'array destructuring' `const [ resource, setResource ] = useState('posts');`
+* the setter causes a rerender
+* we can call useState() multiple times to add multiple attributes to state
+* we add ResourceList as class based componet passing the parent comp state as prop
+* we will fetch ResourceList content from jsonplaceholder dummy backend. we install axios
+* we will fetch content at mount time (lifecycle method)
+```
+    async componentDidMount() {
+        const response = await axios.get(`https://jsonplaceholder.typicode.com/${this.props.resource}`);
+        
+        this.setState({ resources: response.data });
+    }
+```
+* we store the returned list in state.
+* button has no effect as fetch is done at mount time. 
+* we need to repeat the code in componentDidUpdate() to trigger at update. props change trigger update
+* if we fetch backend at coponentDidUpdatewe flood backend with requests. this is because its a deadlock.
+* if we mod state in update triggers update and so on
+* the solution is to get prevProps in and compare it with current props. if they are the same we dont run async code
+```
+    async componentDidUpdate(prevProps) {
+        if(prevProps.resource !== this.props.resource) {
+            const response = await axios.get(`https://jsonplaceholder.typicode.com/${this.props.resource}`);
+            this.setState({ resources: response.data });
+        }
+    }
+```
