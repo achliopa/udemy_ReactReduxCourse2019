@@ -990,3 +990,62 @@ const App = () => {
         }
     }
 ```
+* we refactor clas comp into func comp
+* this comp will use useState and useEffect hooks
+* useEffec() combines componentDidMount() and componentDidUpdate(). it runs when component first mounts and when it updates the collback  passed in runs
+```
+    useEffect(()=> {
+        fetchResource(resource);
+    },[]);
+```
+* the code above is equivalent to componentDidMount. it does not rerun
+```
+    useEffect(()=> {
+        fetchResource(resource);
+    },[resource]);
+```
+* the code above works well it reruns on update. how come??? when the second argument of useEffect() changes the callback runs
+* if we dont pass a second argument the callback is called all the time (deadlock)
+* with empty array as second arg its called once like componentDidMount(). same as if the second param is a constant unchanged
+* if we pass an object literal the callback is recalled as it is like a state object in redux. a new copy not the same
+* i cannot pass an async method as callback. useEffect function must return a cleanup function or nothing. we must use a second wrapper method. or a direct empty arrow method
+```
+    useEffect(()=> {
+        (async (resource) => {
+            const response = await axios.get(`https://jsonplaceholder.typicode.com/${resource}`);
+
+            setResources(response.data);
+        })(resource);
+    },[resource]);
+```
+* in this way we define a function and call it right away
+* with hooks its easy to share logic between components
+* our ResourceList component if we think it as blackbox gets a prop and outputs an array
+* we will try to extract all hook coe in a separate reusable method
+```
+const useResources = (resource) => {
+    const [resources, setResources] = useState([]);
+    useEffect(() => {
+        (async (resource) => {
+            const response = await axios.get(`https://jsonplaceholder.typicode.com/${resource}`);
+
+            setResources(response.data);
+        })(resource);
+    }, [resource]);
+
+    return resources;
+};
+```
+* we use it in the react component separating view from controller
+```
+const ResourceList = ({ resource }) => {
+    const resources = useResources(resource);
+
+    return (
+        <ul>
+            {resources.map(record=><li key={record.id}>{record.title}</li>)}
+        </ul>
+    );
+}
+```
+* we put hooks in a separate file and use it in a new functional component showing how easy it is to reuse the logic
