@@ -818,6 +818,7 @@ nms.run();
 * we will showcase the COntext system with an app that offers 2 languages english and dutch
 * the component hierarchy: App => UserCreate => Field,Button. Context will be used to communicate language property, as UserCreate doesnt care about it.
 * we generate a new project `create-react-app translate`
+<<<<<<< HEAD
 * to run expo in Cloud9 AWS add in app.json
 ```
 {
@@ -852,3 +853,123 @@ export default function App() {
 * only basic set of prebuilt components
 * RN offers tools for responsive design but not out-of-box
 * iOnic takes a web app and wraps it as a native app. low performance
+=======
+* we will add a context object that acts as a pipe
+* To get info in the Context:
+    * set default value when context is created
+    * In parent component add a Provider component that will push info in the Context
+* To get info out of the Context
+    * reference this.context in the nested child component
+    * create a Consumer componet in the nested child component
+* we add /context folder and 'LanguageContext.js'
+```
+import React from 'react';
+export default React.createContext('english');
+```
+* we pass in the default value as param at creation
+* we import LanguageContext in Button
+* we setup contextType property in Button class component `static contextType = LanguageContext;` this is a class attribute so any instance of Button has it. is equivalent to `Button.contextType = LanguageContext`
+* `this.context` returns the default value 'english'
+* we need a way to change the value in context so that its useful. we will use the Provider component to do so from App
+* we import the LanguageContext in App and pass the language selection as value in the COntext object to be used down the nested tree with
+```
+ <LanguageContext.Provider value={this.state.language}>
+                <UserCreate />
+               </LanguageContext.Provider>
+```
+* Context object has a Provider attribute. the value prop will be used to update the context
+* the App with context lifecycle (steps 3-6 repeat on each state change):
+    * Application loads up in the browser
+    * we create a context object with a default value of 'english'
+    * app components gets rendered, creates a Provider that wraps UserCreate
+    * Provider updates the value of the context  object to 'this.state.language'
+    * Button and Field reach into context object, see the value from 'this.state.language'
+    * Button and Field render appropriate text to the screen
+* Each separate use of LanguageContext.Provider creates a new separate 'pipe' of information
+* If we dont wrap with Provider the child componets that use context will use only the default value
+* instead of using  this.context and static ContextType components down the tree can use the Consumer react component of context to use the values of the pipe
+* we see the way to use the consumer
+```
+class Button extends React.Component {
+    renderSubmit(value) {
+    return value === 'english' ? 'Submit' : 'Voorleggen';
+    }
+
+    render() {
+
+        return (
+            <button className="ui button primary">
+                <LanguageContext.Consumer>
+                {(value) => this.renderSubmit(value)}
+                </LanguageContext.Consumer>
+            </button>
+        );
+    }
+}
+```
+* we wrap a callback to be called at each context velue update
+* consumer is useful when we want to consume multiple contexts in a component
+* consuming multiple context
+```
+            <ColorContext.Consumer>
+            {(value) => 
+                    <button className={`ui button ${value}`}>
+                        <LanguageContext.Consumer>
+                            {(value) => this.renderSubmit(value)}
+                        </LanguageContext.Consumer>
+                    </button>
+            }
+            </ColorContext.Consumer>
+```
+* it has to wrap a method so we return JSX
+* provideing multiple context
+```
+               <LanguageContext.Provider value={this.state.language}>
+               <ColorContext.Provider value='red'>
+                <UserCreate />
+               </ColorContext.Provider> 
+               </LanguageContext.Provider>
+```
+
+## Section 24: Replacing Redux with Context
+
+* Redux vs Context
+    * Redux: Distributes data to various components, centralizes data with store, provides mechanism for changing data in the store
+    * Context: Distributes data to various components
+* we will extract language selector as a different component to attempt replace redux with context
+* if we want to use Context in place of Redux
+    * we need to be able to get data to any component in our hierarchy (ok)
+    * we need to be able to separate our view logic from business logic (implement a store like Component for logic)
+    * we need to be able to split up business logic (not to have a single file with 10000 line sof code)
+* store is implemented as a HOC
+```
+import React from 'react';
+
+const Context = React.createContext('dutch');
+
+export class LanguageStore extends React.Component {
+    state = { language: 'english' };
+
+    onLanguageChange = (language) => {
+        this.setState({ language });
+    }
+
+    render() {
+        return (
+            <Context.Provider value={{ ...this.state, onLanguageChange }} >
+                {this.props.children}
+            </Context.Provider>
+        );
+    }
+}
+
+export default Context;
+```
+* Redux: excellend documents, well-known design patterns, a lot of open source libs
+* Context: no need for extra lib, hard to build a store component with cross cutting concepts
+
+## Section 25: Hooks with Functional Components
+
+* With React Hool system Function based components can have state and (kind off) lifecycle methods
+* Why bother? Hooks makes it easy to share logic between components
+>>>>>>> 21a7a2cc69d08a55a38fa9fb54c9859d475455b1
