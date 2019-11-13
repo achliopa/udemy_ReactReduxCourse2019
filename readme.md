@@ -1049,3 +1049,8 @@ const ResourceList = ({ resource }) => {
 }
 ```
 * we put hooks in a separate file and use it in a new functional component showing how easy it is to reuse the logic
+
+## Section 26: More Fun with Hooks
+
+* the convention is to returns arrays from hooks logic wrapper fuanctions not objects
+* we refactor seasons app to use Hooks 
